@@ -1,0 +1,32 @@
+-- Instalação nova. Se a tabela já existe, rode apenas supabase/migrations/002_curadoria_assistida.sql
+create table if not exists offers (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  product_name text not null,
+  product_url text,
+  promotion_url text,
+  affiliate_url text,
+  marketplace text not null check (marketplace in ('Mercado Livre','Shopee')),
+  category text,
+  current_price numeric(12,2) not null,
+  promotional_price numeric(12,2),
+  previous_price numeric(12,2),
+  discount_percent numeric(5,2) not null default 0,
+  rating numeric(2,1),
+  review_count integer,
+  estimated_commission numeric(12,2),
+  has_coupon boolean not null default false,
+  coupon_code text,
+  coupon_type text check (coupon_type in ('R$','%')),
+  coupon_value numeric(12,2),
+  coupon_minimum numeric(12,2),
+  coupon_expiration date,
+  coupon_status text not null default 'Não confirmado' check (coupon_status in ('Confirmado manualmente','Não confirmado')),
+  final_price numeric(12,2),
+  score integer not null default 0,
+  status text not null default 'Pendente' check (status in ('Pendente','Aprovada','Rejeitada')),
+  generated_message text,
+  published_at timestamptz,
+  published_manually boolean not null default false
+);
+create index if not exists offers_product_url_idx on offers (product_url);
